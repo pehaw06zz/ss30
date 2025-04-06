@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let products = [
+            { id: 1, name: "mèn mén", price: 20000, quantity: 20, category: "món ăn dân tộc Mông" },
+            { id: 2, name: "mứt", price: 8000, quantity: 21, category: "món ăn dân tộc Mông" },
+            { id: 3, name: "cơm lam", price: 40000, quantity: 15, category: "món ăn dân tộc Mông" },
+            { id: 4, name: "bánh đậu xanh", price: 60000, quantity: 30, category: "món ăn dân tộc Kinh" },
+        ];
+
+        let cart = [];
+
+        function showProductsByCategory() {
+            let categories = [...new Set(products.map(p => p.category))];
+            let output = "";
+            categories.forEach(cat => {
+                output += `\n=== ${cat} ===\n`;
+                products.filter(p => p.category === cat).forEach(p => {
+                    output += `ID: ${p.id} | Tên: ${p.name} | Giá: ${p.price} | SL: ${p.quantity}\n`;
+                });
+            });
+            alert(output);
+        }
+
+        function addToCart() {
+            let id = parseInt(prompt("Nhập ID sản phẩm muốn mua:"));
+            let product = products.find(p => p.id === id);
+            if (!product) {
+                alert("Sản phẩm không tồn tại!");
+                return;
+            }
+
+            if (product.quantity === 0) {
+                alert("Sản phẩm đã hết hàng.");
+                return;
+            }
+
+            let qty = parseInt(prompt(`Nhập số lượng (hiện còn ${product.quantity}):`));
+            if (qty <= 0 || qty > product.quantity) {
+                alert("Số lượng không hợp lệ hoặc vượt quá tồn kho.");
+                return;
+            }
+
+            product.quantity -= qty;
+
+            let cartItem = cart.find(p => p.id === id);
+            if (cartItem) {
+                cartItem.quantity += qty;
+            } else {
+                cart.push({ ...product, quantity: qty });
+            }
+
+            alert("Đã thêm vào giỏ hàng.");
+        }
+
+        function sortProductsByPrice() {
+            let choice = prompt("1. Sắp xếp TĂNG dần\n2. Sắp xếp GIẢM dần\nNhập lựa chọn:");
+            let sorted = [...products];
+
+            if (choice === "1") {
+                sorted.sort((a, b) => a.price - b.price);
+            } else if (choice === "2") {
+                sorted.sort((a, b) => b.price - a.price);
+            } else {
+                alert("Lựa chọn không hợp lệ.");
+                return;
+            }
+
+            let output = "Danh sách sản phẩm đã sắp xếp:\n";
+            sorted.forEach(p => {
+                output += `ID: ${p.id} | ${p.name} | Giá: ${p.price} | SL: ${p.quantity}\n`;
+            });
+
+            alert(output);
+        }
+
+        function calculateTotal() {
+            let total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            alert(`Tổng tiền trong giỏ hàng: ${total.toLocaleString()} VND`);
+        }
+
+        function showMenu() {
+            let exit = false;
+            while (!exit) {
+                let choice = prompt(
+                    "==== MENU ====\n" +
+                    "1. Hiển thị sản phẩm theo danh mục\n" +
+                    "2. Mua sản phẩm\n" +
+                    "3. Sắp xếp sản phẩm theo giá\n" +
+                    "4. Tính tổng tiền giỏ hàng\n" +
+                    "5. Thoát\n" +
+                    "Nhập lựa chọn của bạn:"
+                );
+                switch (choice) {
+                    case "1":
+                        showProductsByCategory();
+                        break;
+                    case "2":
+                        addToCart();
+                        break;
+                    case "3":
+                        sortProductsByPrice();
+                        break;
+                    case "4":
+                        calculateTotal();
+                        break;
+                    case "5":
+                        exit = true;
+                        alert("Cảm ơn bạn đã sử dụng chương trình!");
+                        break;
+                    default:
+                        alert("Lựa chọn không hợp lệ.");
+                }
+            }
+        }
+        showMenu();
+
+
+    </script>
+</body>
+
+</html>
